@@ -35,7 +35,7 @@ jobs:
       - name: Build
         run: cd client && npm run build
         env:
-          VITE_API_URL: https://quanlyhs.onrender.com
+          VITE_API_URL: https://quanlyhs-github-io-2.onrender.com/api
       
       - name: Create .nojekyll
         run: echo "" > client/dist/.nojekyll

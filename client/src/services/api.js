@@ -1,6 +1,20 @@
 import axios from 'axios';
 
-const API_BASE_URL = '/api';
+// Get API base URL from environment or use default
+const getApiBaseUrl = () => {
+  // Check for production environment variable
+  if (import.meta.env.VITE_API_URL) {
+    return import.meta.env.VITE_API_URL;
+  }
+  // Development uses relative /api path (handled by proxy in vite.config.js)
+  if (import.meta.env.MODE === 'development') {
+    return '/api';
+  }
+  // Production fallback to Render server
+  return 'https://quanlyhs.onrender.com/api';
+};
+
+const API_BASE_URL = getApiBaseUrl();
 
 let accessToken = localStorage.getItem('accessToken');
 
