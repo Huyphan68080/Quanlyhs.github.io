@@ -11,10 +11,15 @@ const getApiBaseUrl = () => {
     return '/api';
   }
   // Production fallback to Render server
-  return 'https://quanlyhs.onrender.com/api';
+  return 'https://quanlyhs-github-io-2.onrender.com/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();
+
+// Debug: Log the API base URL being used
+console.log('API_BASE_URL:', API_BASE_URL);
+console.log('NODE_ENV:', import.meta.env.MODE);
+console.log('VITE_API_URL:', import.meta.env.VITE_API_URL);
 
 let accessToken = localStorage.getItem('accessToken');
 
