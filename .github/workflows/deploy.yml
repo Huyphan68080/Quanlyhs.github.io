@@ -37,8 +37,8 @@ jobs:
         env:
           VITE_API_URL: https://quanlyhs-github-io-2.onrender.com/api
       
-      - name: Create .nojekyll
-        run: echo "" > client/dist/.nojekyll
+      - name: Add .nojekyll file
+        run: touch .nojekyll && touch client/dist/.nojekyll
       
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
