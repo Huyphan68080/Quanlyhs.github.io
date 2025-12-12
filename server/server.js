@@ -13,7 +13,9 @@ dotenv.config();
 const app = express();
 
 // Middleware
-app.use(cors());
+app.use(cors({
+  origin: "*"
+}));
 app.use(express.json());
 
 // Database connection
@@ -35,9 +37,10 @@ app.get('/health', (req, res) => {
   res.json({ status: 'ok' });
 });
 
+// PORT + HOST for Render
 const PORT = process.env.PORT || 5000;
-const HOST = process.env.HOST || 'localhost';
+const HOST = "0.0.0.0";
 
 app.listen(PORT, HOST, () => {
-  console.log(`🚀 Server running on http://${HOST}:${PORT}`);
+  console.log(`🚀 Server running on port ${PORT}`);
 });
