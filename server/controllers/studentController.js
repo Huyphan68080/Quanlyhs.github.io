@@ -1,0 +1,84 @@
+import { Student } from '../models/Student.js';
+import { Grade } from '../models/Grade.js';
+
+export const getAllStudents = async (req, res) => {
+  try {
+    const { className, maSv } = req.query;
+    let query = {};
+
+    if (className) {
+      query.class = className;
+    }
+    if (maSv) {
+      query.maSv = { $regex: maSv, $options: 'i' };
+    }
+
+    const students = await Student.find(query).sort({ createdAt: -1 });
+    res.json(students);
+  } catch (error) {
+    console.error('Get students error:', error);
+    res.status(500).json({ error: 'Failed to fetch students' });
+  }
+};
+
+export const createStudent = async (req, res) => {
+  try {
+    const { maSv, name, class: className } = req.body;
+
+    if (!maSv || !name || !className) {
+      return res.status(400).json({ error: 'Missing required fields: maSv, name, class' });
+    }
+
+    // Check for duplicate maSv
+    const existing = await Student.findOne({ maSv });
+    if (existing) {
+      return res.status(400).json({ error: 'Student ID already exists' });
+    }
+
+    const student = new Student({
+      maSv,
+      name,
+      class: className
+    });
+
+    await student.save();
+    res.status(201).json(student);
+  } catch (error) {
+    console.error('Create student error:', error);
+    res.status(500).json({ error: 'Failed to create student' });
+  }
+};
+
+export const deleteStudent = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Delete associated grades
+    await Grade.deleteMany({ studentId: id });
+
+    // Delete student
+    const student = await Student.findByIdAndDelete(id);
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    res.json({ message: 'Student deleted successfully' });
+  } catch (error) {
+    console.error('Delete student error:', error);
+    res.status(500).json({ error: 'Failed to delete student' });
+  }
+};
+
+export const getStudentById = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const student = await Student.findById(id);
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+    res.json(student);
+  } catch (error) {
+    console.error('Get student error:', error);
+    res.status(500).json({ error: 'Failed to fetch student' });
+  }
+};

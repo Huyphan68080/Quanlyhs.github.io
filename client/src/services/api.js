@@ -1,0 +1,79 @@
+import axios from 'axios';
+
+const API_BASE_URL = '/api';
+
+let accessToken = localStorage.getItem('accessToken');
+
+export const setAccessToken = (token) => {
+  accessToken = token;
+  localStorage.setItem('accessToken', token);
+};
+
+export const getAccessToken = () => accessToken;
+
+export const clearAccessToken = () => {
+  accessToken = null;
+  localStorage.removeItem('accessToken');
+};
+
+// Create axios instance with default headers
+const api = axios.create({
+  baseURL: API_BASE_URL,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Add token to requests
+api.interceptors.request.use((config) => {
+  if (accessToken) {
+    config.headers.Authorization = `Bearer ${accessToken}`;
+  }
+  return config;
+});
+
+// Auth API
+export const authAPI = {
+  login: (username, password) =>
+    api.post('/auth/login', { username, password }),
+  seedAdmin: () =>
+    api.post('/auth/seed-admin'),
+};
+
+// Students API
+export const studentsAPI = {
+  getAll: (className, maSv) => {
+    const params = new URLSearchParams();
+    if (className) params.append('className', className);
+    if (maSv) params.append('maSv', maSv);
+    return api.get(`/students?${params.toString()}`);
+  },
+  create: (maSv, name, className) =>
+    api.post('/students', { maSv, name, class: className }),
+  delete: (id) =>
+    api.delete(`/students/${id}`),
+  getById: (id) =>
+    api.get(`/students/${id}`),
+};
+
+// Grades API
+export const gradesAPI = {
+  getStudentGrades: (studentId) =>
+    api.get(`/grades/${studentId}/grades`),
+  updateStudentGrades: (studentId, grades) =>
+    api.post(`/grades/${studentId}/grades`, grades),
+  getClassGrades: (className) =>
+    api.get(`/grades/class/${className}/grades`),
+};
+
+// Stats API
+export const statsAPI = {
+  getClassesStats: () =>
+    api.get('/stats/classes'),
+  getSubjectsStats: () =>
+    api.get('/stats/subjects'),
+  getDistributionStats: () =>
+    api.get('/stats/distribution'),
+};
+
+export default api;
