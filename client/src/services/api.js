@@ -11,7 +11,7 @@ const getApiBaseUrl = () => {
     return '/api';
   }
   // Production fallback to Render server
-  return 'https://quanlyhs-github-io-2.onrender.com/api';
+  return 'https://quanlyhs-github-io-3.onrender.com/api';
 };
 
 const API_BASE_URL = getApiBaseUrl();

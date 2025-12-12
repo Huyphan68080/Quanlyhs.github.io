@@ -35,7 +35,7 @@ jobs:
       - name: Build
         run: cd client && npm run build
         env:
-          VITE_API_URL: https://quanlyhs-github-io-2.onrender.com/api
+          VITE_API_URL: https://quanlyhs-github-io-3.onrender.com/api
       
       - name: Add .nojekyll file
         run: touch .nojekyll && touch client/dist/.nojekyll
