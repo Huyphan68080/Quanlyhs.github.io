@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: quanlyhs-server
+    env: node
+    region: oregon
+    plan: free
+    buildCommand: cd server && npm install
+    startCommand: cd server && npm start
+    envVars:
+      - key: MONGODB_URI
+        scope: build
+      - key: NODE_ENV
+        value: production
+      - key: HOST
+        value: 0.0.0.0

@@ -1,0 +1,30 @@
+// API Service
+// Automatically uses the correct backend URL based on environment
+
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000';
+
+export const api = {
+  // Auth
+  login: (email, password) => 
+    fetch(`${API_URL}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password })
+    }).then(r => r.json()),
+
+  register: (userData) => 
+    fetch(`${API_URL}/api/auth/register`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(userData)
+    }).then(r => r.json()),
+
+  // Students
+  getStudents: () => 
+    fetch(`${API_URL}/api/students`).then(r => r.json()),
+
+  getStudent: (id) => 
+    fetch(`${API_URL}/api/students/${id}`).then(r => r.json()),
+
+  // Add more endpoints as needed
+};
