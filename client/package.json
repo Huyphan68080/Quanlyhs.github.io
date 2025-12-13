@@ -2,7 +2,7 @@
   "name": "quanlyhocsinh-client",
   "version": "1.0.0",
   "description": "Student Management System Frontend",
-  "homepage": "https://huyphan68080.github.io/Quanlyhs.github.io",
+  "homepage": "https://huyphan68080.github.io",
   "type": "module",
   "scripts": {
     "dev": "vite",
