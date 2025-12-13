@@ -10,29 +10,36 @@ export default function ChartsPanel() {
   const [distributionStats, setDistributionStats] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      const [classRes, distRes] = await Promise.all([
+        statsAPI.getClassesStats(),
+        statsAPI.getDistributionStats()
+      ]);
+
+      // Sort classes by average descending
+      const sortedClasses = classRes.data.classes.sort((a, b) => b.classAverage - a.classAverage);
+      setClassStats(sortedClasses);
+      setDistributionStats(distRes.data);
+      setError('');
+    } catch (err) {
+      setError('Failed to load chart data');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const [classRes, distRes] = await Promise.all([
-          statsAPI.getClassesStats(),
-          statsAPI.getDistributionStats()
-        ]);
-
-        // Sort classes by average descending
-        const sortedClasses = classRes.data.classes.sort((a, b) => b.classAverage - a.classAverage);
-        setClassStats(sortedClasses);
-        setDistributionStats(distRes.data);
-      } catch (err) {
-        setError('Failed to load chart data');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchStats();
-  }, []);
+  }, [refreshKey]);
+
+  const handleRefresh = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   // Prepare pie chart data
   const pieData = CLASSIFICATION_NAMES.map(name => ({
@@ -78,9 +85,21 @@ export default function ChartsPanel() {
 
   return (
     <div className="animate-fade-in">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Biểu Đồ Thống Kê</h1>
-        <p className="text-gray-500 mt-2">Phân tích điểm học sinh theo lớp và xếp loại</p>
+      <div className="mb-8 flex justify-between items-center">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900">Biểu Đồ Thống Kê</h1>
+          <p className="text-gray-500 mt-2">Phân tích điểm học sinh theo lớp và xếp loại</p>
+        </div>
+        <button
+          onClick={handleRefresh}
+          disabled={loading}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg btn-ripple smooth-transition disabled:opacity-50"
+        >
+          <svg className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Cập nhật
+        </button>
       </div>
 
       {error && (

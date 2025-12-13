@@ -5,22 +5,29 @@ export default function Dashboard({ onNavigate }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [refreshKey, setRefreshKey] = useState(0);
+
+  const fetchStats = async () => {
+    try {
+      setLoading(true);
+      const response = await statsAPI.getClassesStats();
+      setStats(response.data);
+      setError('');
+    } catch (err) {
+      setError('Failed to load dashboard');
+      console.error(err);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchStats = async () => {
-      try {
-        const response = await statsAPI.getClassesStats();
-        setStats(response.data);
-      } catch (err) {
-        setError('Failed to load dashboard');
-        console.error(err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
     fetchStats();
-  }, []);
+  }, [refreshKey]);
+
+  const handleRefresh = () => {
+    setRefreshKey(prev => prev + 1);
+  };
 
   if (loading) {
     return (
@@ -44,7 +51,18 @@ export default function Dashboard({ onNavigate }) {
         <p className="text-gray-500 mt-2">Tổng quan quản lý học sinh</p>
       </div>
 
-      {error && (
+      <div className="mb-6 flex justify-end">
+        <button
+          onClick={handleRefresh}
+          disabled={loading}
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg btn-ripple smooth-transition disabled:opacity-50"
+        >
+          <svg className={`w-5 h-5 ${loading ? 'animate-spin' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+          </svg>
+          Cập nhật
+        </button>
+      </div>
         <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
           {error}
         </div>

@@ -31,7 +31,7 @@ const getClassificationColor = (classification) => {
   }
 };
 
-export default function StudentDetail({ student, onBack }) {
+export default function StudentDetail({ student, onBack, onRefresh }) {
   const [grades, setGrades] = useState(student?.grades || {});
   const [average, setAverage] = useState(student?.average || 0);
   const [loading, setLoading] = useState(false);
@@ -83,6 +83,12 @@ export default function StudentDetail({ student, onBack }) {
       setAverage(response.data.average);
       setIsEditing(false);
       setSuccess('Điểm được cập nhật thành công');
+      
+      // Trigger refresh in parent components
+      if (onRefresh) {
+        setTimeout(() => onRefresh(), 500);
+      }
+      
       setTimeout(() => setSuccess(''), 3000);
     } catch (err) {
       setError(err.response?.data?.error || 'Failed to update grades');

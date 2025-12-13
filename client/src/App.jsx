@@ -13,6 +13,16 @@ export default function App() {
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
+  const [chartsRefreshKey, setChartsRefreshKey] = useState(0);
+
+  const handleRefreshDashboard = () => {
+    setDashboardRefreshKey(prev => prev + 1);
+  };
+
+  const handleRefreshCharts = () => {
+    setChartsRefreshKey(prev => prev + 1);
+  };
 
   useEffect(() => {
     // Check if token exists in localStorage
@@ -146,13 +156,17 @@ export default function App() {
             <StudentDetail 
               student={selectedStudent} 
               onBack={() => setSelectedStudent(null)}
+              onRefresh={() => {
+                handleRefreshDashboard();
+                handleRefreshCharts();
+              }}
             />
           ) : currentPage === 'dashboard' ? (
-            <Dashboard onNavigate={setCurrentPage} />
+            <Dashboard key={dashboardRefreshKey} onNavigate={setCurrentPage} />
           ) : currentPage === 'students' ? (
             <StudentsList onSelectStudent={(student) => setSelectedStudent(student)} />
           ) : currentPage === 'charts' ? (
-            <ChartsPanel />
+            <ChartsPanel key={chartsRefreshKey} />
           ) : currentPage === 'classes' ? (
             <ClassesList />
           ) : null}
