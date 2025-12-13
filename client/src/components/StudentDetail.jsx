@@ -84,12 +84,12 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
       setIsEditing(false);
       setSuccess('Điểm được cập nhật thành công');
       
-      // Trigger refresh in parent components
+      // Trigger refresh in parent components immediately
       if (onRefresh) {
-        setTimeout(() => onRefresh(), 500);
+        onRefresh();
       }
       if (onRefreshCharts) {
-        setTimeout(() => onRefreshCharts(), 500);
+        onRefreshCharts();
       }
       
       setTimeout(() => setSuccess(''), 3000);
