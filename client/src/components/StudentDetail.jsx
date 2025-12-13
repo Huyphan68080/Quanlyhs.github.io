@@ -31,7 +31,7 @@ const getClassificationColor = (classification) => {
   }
 };
 
-export default function StudentDetail({ student, onBack, onRefresh }) {
+export default function StudentDetail({ student, onBack, onRefresh, onRefreshCharts }) {
   const [grades, setGrades] = useState(student?.grades || {});
   const [average, setAverage] = useState(student?.average || 0);
   const [loading, setLoading] = useState(false);
@@ -87,6 +87,9 @@ export default function StudentDetail({ student, onBack, onRefresh }) {
       // Trigger refresh in parent components
       if (onRefresh) {
         setTimeout(() => onRefresh(), 500);
+      }
+      if (onRefreshCharts) {
+        setTimeout(() => onRefreshCharts(), 500);
       }
       
       setTimeout(() => setSuccess(''), 3000);

@@ -156,10 +156,8 @@ export default function App() {
             <StudentDetail 
               student={selectedStudent} 
               onBack={() => setSelectedStudent(null)}
-              onRefresh={() => {
-                handleRefreshDashboard();
-                handleRefreshCharts();
-              }}
+              onRefresh={handleRefreshDashboard}
+              onRefreshCharts={handleRefreshCharts}
             />
           ) : currentPage === 'dashboard' ? (
             <Dashboard key={dashboardRefreshKey} onNavigate={setCurrentPage} />
