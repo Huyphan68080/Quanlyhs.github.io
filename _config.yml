@@ -1,2 +1,17 @@
 # GitHub Pages and Jekyll config
-# Disable Jekyll processingtheme: null
+# Disable Jekyll processing
+theme: null
+
+# Exclude files from being processed
+exclude:
+  - node_modules
+  - client/node_modules
+  - server/node_modules
+  - vendor
+  - .git
+  - .github
+  - package.json
+  - package-lock.json
+  - README.md
+  - QUICKSTART.md
+  - render.yaml
