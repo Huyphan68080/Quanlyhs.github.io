@@ -45,7 +45,6 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
       try {
         setLoading(true);
         const response = await gradesAPI.getStudentGrades(student._id);
-        console.log('Fetched grades response:', response.data);
         setGrades(response.data.grades);
         setAverage(response.data.average);
         setError('');

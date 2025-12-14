@@ -12,7 +12,6 @@ export default function Dashboard({ onNavigate, refreshKey }) {
       const response = await statsAPI.getClassesStats();
       setStats(response.data);
       setError('');
-      console.log('Dashboard stats updated:', response.data);
     } catch (err) {
       setError('Failed to load dashboard');
       console.error(err);
