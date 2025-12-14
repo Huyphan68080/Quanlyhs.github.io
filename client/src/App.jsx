@@ -167,7 +167,7 @@ export default function App() {
               onUpdateStudent={(updatedStudent) => setSelectedStudent(updatedStudent)}
             />
           ) : currentPage === 'dashboard' ? (
-            <Dashboard key={dashboardRefreshKey} onNavigate={setCurrentPage} />
+            <Dashboard key={dashboardRefreshKey} refreshKey={dashboardRefreshKey} onNavigate={setCurrentPage} />
           ) : currentPage === 'students' ? (
             <StudentsList onSelectStudent={(student) => setSelectedStudent(student)} />
           ) : currentPage === 'charts' ? (

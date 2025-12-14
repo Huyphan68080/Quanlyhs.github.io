@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { statsAPI } from '../services/api.js';
 
-export default function Dashboard({ onNavigate }) {
+export default function Dashboard({ onNavigate, refreshKey }) {
   const [stats, setStats] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [refreshKey, setRefreshKey] = useState(0);
 
   const fetchStats = async () => {
     try {
@@ -13,6 +12,7 @@ export default function Dashboard({ onNavigate }) {
       const response = await statsAPI.getClassesStats();
       setStats(response.data);
       setError('');
+      console.log('Dashboard stats updated:', response.data);
     } catch (err) {
       setError('Failed to load dashboard');
       console.error(err);
@@ -24,10 +24,6 @@ export default function Dashboard({ onNavigate }) {
   useEffect(() => {
     fetchStats();
   }, [refreshKey]);
-
-  const handleRefresh = () => {
-    setRefreshKey(prev => prev + 1);
-  };
 
   if (loading) {
     return (
@@ -53,7 +49,7 @@ export default function Dashboard({ onNavigate }) {
 
       <div className="mb-6 flex justify-end">
         <button
-          onClick={handleRefresh}
+          onClick={fetchStats}
           disabled={loading}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg btn-ripple smooth-transition disabled:opacity-50"
         >
