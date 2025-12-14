@@ -15,6 +15,7 @@ export default function App() {
   const [loading, setLoading] = useState(true);
   const [dashboardRefreshKey, setDashboardRefreshKey] = useState(0);
   const [chartsRefreshKey, setChartsRefreshKey] = useState(0);
+  const [studentsRefreshKey, setStudentsRefreshKey] = useState(0);
 
   const handleRefreshDashboard = () => {
     setDashboardRefreshKey(prev => prev + 1);
@@ -22,6 +23,10 @@ export default function App() {
 
   const handleRefreshCharts = () => {
     setChartsRefreshKey(prev => prev + 1);
+  };
+
+  const handleRefreshStudents = () => {
+    setStudentsRefreshKey(prev => prev + 1);
   };
 
   useEffect(() => {

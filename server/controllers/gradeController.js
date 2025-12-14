@@ -59,7 +59,7 @@ export const getStudentGrades = async (req, res) => {
 export const updateStudentGrades = async (req, res) => {
   try {
     const { id } = req.params;
-    const gradeData = req.body; // { Van: 8.5, Toan: 7, ..., TheDuc: "Đạt" }
+    const gradeData = req.body; // { Van: 8.5, Toan: 7, ..., TheDuc: "Đạt" or null }
 
     const student = await Student.findById(id);
     if (!student) {
@@ -70,6 +70,11 @@ export const updateStudentGrades = async (req, res) => {
     for (const [subject, score] of Object.entries(gradeData)) {
       if (!SUBJECTS.includes(subject)) {
         return res.status(400).json({ error: `Invalid subject: ${subject}` });
+      }
+      
+      // Allow null to represent "no grade entered"
+      if (score === null || score === undefined) {
+        continue;
       }
       
       if (subject === 'TheDuc') {
@@ -86,7 +91,14 @@ export const updateStudentGrades = async (req, res) => {
     }
 
     // Upsert grades (update if exists, create if not)
+    // For null values, we still call update to preserve data consistency
     for (const [subject, score] of Object.entries(gradeData)) {
+      if (score === null || score === undefined) {
+        // If score is null/undefined, only delete if it doesn't have data
+        // But to be safe, let's keep existing grades intact by skipping null updates
+        continue;
+      }
+      
       await Grade.findOneAndUpdate(
         { studentId: id, subject },
         { score },
@@ -145,10 +157,10 @@ export const getClassGrades = async (req, res) => {
     // Get all grades for the class
     const grades = await Grade.find({ studentId: { $in: studentIds } });
 
-    // Calculate subject averages
+    // Calculate subject averages (exclude TheDuc)
     const subjectAverages = {};
     SUBJECTS.forEach(subject => {
-      const subjectGrades = grades.filter(g => g.subject === subject);
+      const subjectGrades = grades.filter(g => g.subject === subject && g.subject !== 'TheDuc');
       if (subjectGrades.length > 0) {
         const avg = subjectGrades.reduce((sum, g) => sum + g.score, 0) / subjectGrades.length;
         subjectAverages[subject] = parseFloat(avg.toFixed(2));
@@ -157,10 +169,10 @@ export const getClassGrades = async (req, res) => {
       }
     });
 
-    // Calculate student averages
+    // Calculate student averages (exclude TheDuc)
     const studentAverages = {};
     students.forEach(student => {
-      const studentGrades = grades.filter(g => g.studentId.toString() === student._id.toString());
+      const studentGrades = grades.filter(g => g.studentId.toString() === student._id.toString() && g.subject !== 'TheDuc');
       if (studentGrades.length > 0) {
         const avg = studentGrades.reduce((sum, g) => sum + g.score, 0) / studentGrades.length;
         studentAverages[student._id] = avg;

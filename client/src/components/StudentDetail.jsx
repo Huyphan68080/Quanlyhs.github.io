@@ -31,7 +31,7 @@ const getClassificationColor = (classification) => {
   }
 };
 
-export default function StudentDetail({ student, onBack, onRefresh, onRefreshCharts }) {
+export default function StudentDetail({ student, onBack, onRefresh, onRefreshCharts, onRefreshStudents }) {
   const [grades, setGrades] = useState(student?.grades || {});
   const [average, setAverage] = useState(student?.average || 0);
   const [loading, setLoading] = useState(false);
@@ -73,9 +73,8 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
       setError('');
       const gradeData = {};
       SUBJECTS.forEach(subject => {
-        if (grades[subject.key] !== null && grades[subject.key] !== undefined) {
-          gradeData[subject.key] = grades[subject.key];
-        }
+        // Send all grades, including null values to prevent data loss
+        gradeData[subject.key] = grades[subject.key] !== undefined ? grades[subject.key] : null;
       });
       
       const response = await gradesAPI.updateStudentGrades(student._id, gradeData);
@@ -90,6 +89,9 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
       }
       if (onRefreshCharts) {
         onRefreshCharts();
+      }
+      if (onRefreshStudents) {
+        onRefreshStudents();
       }
       
       setTimeout(() => setSuccess(''), 3000);

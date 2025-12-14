@@ -26,10 +26,10 @@ export const getClassesStats = async (req, res) => {
       const studentIds = classStudents.map(s => s._id);
       const grades = await Grade.find({ studentId: { $in: studentIds } });
 
-      // Calculate student averages
+      // Calculate student averages (exclude TheDuc)
       const studentAverages = [];
       classStudents.forEach(student => {
-        const studentGrades = grades.filter(g => g.studentId.toString() === student._id.toString());
+        const studentGrades = grades.filter(g => g.studentId.toString() === student._id.toString() && g.subject !== 'TheDuc');
         if (studentGrades.length > 0) {
           const avg = studentGrades.reduce((sum, g) => sum + g.score, 0) / studentGrades.length;
           studentAverages.push(avg);
@@ -107,7 +107,7 @@ export const getDistributionStats = async (req, res) => {
     const studentIds = students.map(s => s._id);
     const grades = await Grade.find({ studentId: { $in: studentIds } });
 
-    // Calculate distribution for all students
+    // Calculate distribution for all students (exclude TheDuc)
     const distribution = {
       'Xuất sắc': 0,
       'Giỏi': 0,
@@ -119,7 +119,7 @@ export const getDistributionStats = async (req, res) => {
     const studentAverages = {};
 
     students.forEach(student => {
-      const studentGrades = grades.filter(g => g.studentId.toString() === student._id.toString());
+      const studentGrades = grades.filter(g => g.studentId.toString() === student._id.toString() && g.subject !== 'TheDuc');
       if (studentGrades.length > 0) {
         const avg = studentGrades.reduce((sum, g) => sum + g.score, 0) / studentGrades.length;
         studentAverages[student._id] = avg;
