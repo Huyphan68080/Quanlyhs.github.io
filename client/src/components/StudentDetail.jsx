@@ -31,7 +31,7 @@ const getClassificationColor = (classification) => {
   }
 };
 
-export default function StudentDetail({ student, onBack, onRefresh, onRefreshCharts, onRefreshStudents }) {
+export default function StudentDetail({ student, onBack, onRefresh, onRefreshCharts, onRefreshStudents, onUpdateStudent }) {
   const [grades, setGrades] = useState(student?.grades || {});
   const [average, setAverage] = useState(student?.average || 0);
   const [loading, setLoading] = useState(false);
@@ -82,6 +82,15 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
       setAverage(response.data.average);
       setIsEditing(false);
       setSuccess('Điểm được cập nhật thành công');
+      
+      // Update parent component with new student data
+      if (onUpdateStudent) {
+        onUpdateStudent({
+          ...student,
+          grades: response.data.grades,
+          average: response.data.average
+        });
+      }
       
       // Trigger refresh in parent components immediately
       if (onRefresh) {
