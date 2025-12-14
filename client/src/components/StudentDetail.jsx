@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { gradesAPI } from '../services/api.js';
 
 const SUBJECTS = [
@@ -38,6 +38,31 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [isEditing, setIsEditing] = useState(false);
+
+  // Fetch grades from server when component mounts or student changes
+  useEffect(() => {
+    const fetchGrades = async () => {
+      try {
+        setLoading(true);
+        const response = await gradesAPI.getStudentGrades(student._id);
+        setGrades(response.data.grades);
+        setAverage(response.data.average);
+        setError('');
+      } catch (err) {
+        console.error('Failed to fetch grades:', err);
+        setError('Không thể tải điểm');
+        // Fallback to props data if fetch fails
+        setGrades(student?.grades || {});
+        setAverage(student?.average || 0);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (student?._id) {
+      fetchGrades();
+    }
+  }, [student?._id]);
 
   const handleGradeChange = (subject, value) => {
     if (subject === 'TheDuc') {
