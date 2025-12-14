@@ -45,6 +45,7 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
       try {
         setLoading(true);
         const response = await gradesAPI.getStudentGrades(student._id);
+        console.log('Fetched grades response:', response.data);
         setGrades(response.data.grades);
         setAverage(response.data.average);
         setError('');
@@ -70,22 +71,22 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
       const newGrades = { ...grades, [subject]: value };
       setGrades(newGrades);
       
-      // Calculate new average (exclude Thể Dục)
+      // Calculate new average (exclude Thể Dục) - chỉ lấy những môn có điểm
       const values = SUBJECTS.filter(s => s.key !== 'TheDuc')
-        .map(s => parseFloat(newGrades[s.key]) || 0)
-        .filter(v => v !== null);
+        .map(s => parseFloat(newGrades[s.key]))
+        .filter(v => !isNaN(v) && v !== null);
       const newAverage = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
       setAverage(parseFloat(newAverage.toFixed(2)));
     } else {
-      const numValue = parseFloat(value) || 0;
+      const numValue = parseFloat(value);
       if (numValue >= 0 && numValue <= 10) {
         const newGrades = { ...grades, [subject]: numValue };
         setGrades(newGrades);
         
-        // Calculate new average (exclude Thể Dục)
+        // Calculate new average (exclude Thể Dục) - chỉ lấy những môn có điểm
         const values = SUBJECTS.filter(s => s.key !== 'TheDuc')
-          .map(s => parseFloat(newGrades[s.key]) || 0)
-          .filter(v => v !== null);
+          .map(s => parseFloat(newGrades[s.key]))
+          .filter(v => !isNaN(v) && v !== null);
         const newAverage = values.length > 0 ? values.reduce((a, b) => a + b, 0) / values.length : 0;
         setAverage(parseFloat(newAverage.toFixed(2)));
       }
@@ -111,7 +112,9 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
         return;
       }
       
+      console.log('Sending grade data:', gradeData);
       const response = await gradesAPI.updateStudentGrades(student._id, gradeData);
+      console.log('Response from update:', response.data);
       setGrades(response.data.grades);
       setAverage(response.data.average);
       setIsEditing(false);

@@ -163,6 +163,7 @@ export default function App() {
               onBack={() => setSelectedStudent(null)}
               onRefresh={handleRefreshDashboard}
               onRefreshCharts={handleRefreshCharts}
+              onRefreshStudents={handleRefreshStudents}
               onUpdateStudent={(updatedStudent) => setSelectedStudent(updatedStudent)}
             />
           ) : currentPage === 'dashboard' ? (
