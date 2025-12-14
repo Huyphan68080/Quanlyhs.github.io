@@ -98,9 +98,18 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
       setError('');
       const gradeData = {};
       SUBJECTS.forEach(subject => {
-        // Send all grades, including null values to prevent data loss
-        gradeData[subject.key] = grades[subject.key] !== undefined ? grades[subject.key] : null;
+        // Only send grades that are not null/undefined (only changed values)
+        if (grades[subject.key] !== null && grades[subject.key] !== undefined) {
+          gradeData[subject.key] = grades[subject.key];
+        }
       });
+      
+      // Check if any grades were entered
+      if (Object.keys(gradeData).length === 0) {
+        setError('Vui lòng nhập ít nhất một điểm');
+        setLoading(false);
+        return;
+      }
       
       const response = await gradesAPI.updateStudentGrades(student._id, gradeData);
       setGrades(response.data.grades);

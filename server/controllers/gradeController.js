@@ -91,14 +91,7 @@ export const updateStudentGrades = async (req, res) => {
     }
 
     // Upsert grades (update if exists, create if not)
-    // For null values, we still call update to preserve data consistency
     for (const [subject, score] of Object.entries(gradeData)) {
-      if (score === null || score === undefined) {
-        // If score is null/undefined, only delete if it doesn't have data
-        // But to be safe, let's keep existing grades intact by skipping null updates
-        continue;
-      }
-      
       await Grade.findOneAndUpdate(
         { studentId: id, subject },
         { score },
