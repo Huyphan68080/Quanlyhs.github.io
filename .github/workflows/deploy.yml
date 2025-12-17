@@ -38,13 +38,11 @@ jobs:
           VITE_API_URL: https://quanlyhs-github-io-3.onrender.com/api
       
       - name: Add .nojekyll file
-        run: touch .nojekyll && touch client/dist/.nojekyll
+        run: touch .nojekyll
       
-      - name: Upload artifact
-        uses: actions/upload-pages-artifact@v3
-        with:
-          path: client/dist
-
-      - name: Deploy to GitHub Pages
-        id: deployment
-        uses: actions/deploy-pages@v4
+      - name: Commit and push built assets
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add index.* .nojekyll -f
+          git diff --quiet && git diff --staged --quiet || (git commit -m "Auto-deploy: Update built assets" && git push)
