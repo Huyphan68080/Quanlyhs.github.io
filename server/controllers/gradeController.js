@@ -1,5 +1,6 @@
 import { Grade } from '../models/Grade.js';
 import { Student } from '../models/Student.js';
+import { Classroom } from '../models/Classroom.js';
 
 const SUBJECTS = ['Van', 'Toan', 'TiengAnh', 'Hoa', 'Su', 'Dia', 'VatLy', 'TheDuc'];
 
@@ -205,3 +206,72 @@ export const getClassGrades = async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch class grades' });
   }
 };
+
+// Get grades for a specific student (for user grade view)
+export const getStudentGradesForUser = async (req, res) => {
+  try {
+    const { studentId } = req.params;
+
+    const student = await Student.findById(studentId);
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    const grades = await Grade.find({ studentId });
+    const gradesArray = grades.map(g => ({
+      subject: g.subject,
+      grade: g.score
+    }));
+
+    res.json(gradesArray);
+  } catch (error) {
+    console.error('Get student grades for user error:', error);
+    res.status(500).json({ error: 'Failed to fetch grades' });
+  }
+};
+
+// Get top 3 students in a class by average grade
+export const getTopStudentsByClass = async (req, res) => {
+  try {
+    const { classId } = req.params;
+
+    const classroom = await Classroom.findById(classId);
+    if (!classroom) {
+      return res.status(404).json({ error: 'Class not found' });
+    }
+
+    const students = await Student.find({ class: classId });
+    const studentIds = students.map(s => s._id);
+
+    // Get all grades for these students
+    const grades = await Grade.find({ studentId: { $in: studentIds } });
+
+    // Calculate average for each student
+    const studentAverages = students.map(student => {
+      const studentGrades = grades.filter(
+        g => g.studentId.toString() === student._id.toString() && g.subject !== 'TheDuc'
+      );
+      const avg = studentGrades.length > 0
+        ? studentGrades.reduce((sum, g) => sum + g.score, 0) / studentGrades.length
+        : 0;
+
+      return {
+        _id: student._id,
+        name: student.name,
+        studentCode: student.studentCode,
+        averageGrade: parseFloat(avg.toFixed(2))
+      };
+    });
+
+    // Sort by average grade descending and get top 3
+    const topStudents = studentAverages
+      .sort((a, b) => b.averageGrade - a.averageGrade)
+      .slice(0, 3);
+
+    res.json(topStudents);
+  } catch (error) {
+    console.error('Get top students error:', error);
+    res.status(500).json({ error: 'Failed to fetch top students' });
+  }
+};
+

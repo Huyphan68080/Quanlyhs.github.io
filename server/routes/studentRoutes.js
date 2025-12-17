@@ -3,13 +3,19 @@ import {
   getAllStudents,
   createStudent,
   deleteStudent,
-  getStudentById
+  getStudentById,
+  getAllClasses,
+  getStudentsByClass
 } from '../controllers/studentController.js';
 import { authenticateToken, authorizeAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// All student routes require authentication and admin role
+// Public/user routes
+router.get('/classes/list', authenticateToken, getAllClasses);
+router.get('/class/:classId', authenticateToken, getStudentsByClass);
+
+// Admin routes (require authentication and admin role)
 router.use(authenticateToken, authorizeAdmin);
 
 router.get('/', getAllStudents);

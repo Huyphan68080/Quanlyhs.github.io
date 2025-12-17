@@ -1,5 +1,6 @@
 import { Student } from '../models/Student.js';
 import { Grade } from '../models/Grade.js';
+import { Classroom } from '../models/Classroom.js';
 
 export const getAllStudents = async (req, res) => {
   try {
@@ -80,5 +81,34 @@ export const getStudentById = async (req, res) => {
   } catch (error) {
     console.error('Get student error:', error);
     res.status(500).json({ error: 'Failed to fetch student' });
+  }
+};
+
+// Get all classes
+export const getAllClasses = async (req, res) => {
+  try {
+    const classes = await Classroom.find().sort({ name: 1 });
+    res.json(classes);
+  } catch (error) {
+    console.error('Get classes error:', error);
+    res.status(500).json({ error: 'Failed to fetch classes' });
+  }
+};
+
+// Get students by class ID
+export const getStudentsByClass = async (req, res) => {
+  try {
+    const { classId } = req.params;
+
+    const classroom = await Classroom.findById(classId);
+    if (!classroom) {
+      return res.status(404).json({ error: 'Class not found' });
+    }
+
+    const students = await Student.find({ class: classId }).sort({ name: 1 });
+    res.json(students);
+  } catch (error) {
+    console.error('Get students by class error:', error);
+    res.status(500).json({ error: 'Failed to fetch students' });
   }
 };

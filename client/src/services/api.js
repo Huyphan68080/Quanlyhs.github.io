@@ -35,6 +35,35 @@ export const clearAccessToken = () => {
   localStorage.removeItem('accessToken');
 };
 
+// Decode JWT to get user info (role, username, etc.)
+export const decodeToken = (token) => {
+  try {
+    if (!token) return null;
+    const parts = token.split('.');
+    if (parts.length !== 3) return null;
+    
+    const decoded = JSON.parse(atob(parts[1]));
+    return decoded;
+  } catch (error) {
+    console.error('Error decoding token:', error);
+    return null;
+  }
+};
+
+// Get user role from token
+export const getUserRole = () => {
+  const token = getAccessToken();
+  if (!token) return null;
+  
+  const decoded = decodeToken(token);
+  return decoded?.role || null;
+};
+
+// Check if user is admin
+export const isAdmin = () => {
+  return getUserRole() === 'admin';
+};
+
 // Create axios instance with default headers
 const api = axios.create({
   baseURL: API_BASE_URL,
@@ -75,6 +104,10 @@ export const studentsAPI = {
     api.delete(`/students/${id}`),
   getById: (id) =>
     api.get(`/students/${id}`),
+  getClasses: () =>
+    api.get('/students/classes/list'),
+  getByClass: (classId) =>
+    api.get(`/students/class/${classId}`),
 };
 
 // Grades API
@@ -85,6 +118,10 @@ export const gradesAPI = {
     api.post(`/grades/${studentId}/grades`, grades),
   getClassGrades: (className) =>
     api.get(`/grades/class/${className}/grades`),
+  getByStudent: (studentId) =>
+    api.get(`/grades/student/${studentId}`),
+  getTopStudents: (classId) =>
+    api.get(`/grades/class/${classId}/top-students`),
 };
 
 // Stats API

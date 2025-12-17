@@ -2,13 +2,19 @@ import express from 'express';
 import {
   getStudentGrades,
   updateStudentGrades,
-  getClassGrades
+  getClassGrades,
+  getStudentGradesForUser,
+  getTopStudentsByClass
 } from '../controllers/gradeController.js';
 import { authenticateToken, authorizeAdmin } from '../middleware/auth.js';
 
 const router = express.Router();
 
-// All grade routes require authentication and admin role
+// User routes (authenticated users can access their own grades)
+router.get('/student/:studentId', authenticateToken, getStudentGradesForUser);
+router.get('/class/:classId/top-students', authenticateToken, getTopStudentsByClass);
+
+// Admin routes (require authentication and admin role)
 router.use(authenticateToken, authorizeAdmin);
 
 router.get('/class/:className/grades', getClassGrades);
