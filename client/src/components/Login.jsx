@@ -25,21 +25,21 @@ export default function Login({ onLoginSuccess }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
-      <div className="bg-white rounded-2xl shadow-xl p-8 w-full max-w-md animate-fade-in">
+      <div className="bg-white rounded-lg md:rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">Quản Lý Học Sinh</h1>
-          <p className="text-gray-500">Hệ thống quản lý điểm học sinh</p>
+          <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Quản Lý Học Sinh</h1>
+          <p className="text-xs md:text-sm text-gray-500">Hệ thống quản lý điểm học sinh</p>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg mb-6">
+          <div className="bg-red-50 border border-red-200 text-red-700 px-3 md:px-4 py-2 md:py-3 rounded-lg mb-6 text-xs md:text-sm">
             {error}
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-4 md:space-y-6">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">
               Tên đăng nhập
             </label>
             <input
@@ -47,13 +47,13 @@ export default function Login({ onLoginSuccess }) {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder="Nhập tên đăng nhập"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent smooth-transition"
+              className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent smooth-transition text-sm md:text-base"
               disabled={loading}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">
               Mật khẩu
             </label>
             <input
@@ -61,7 +61,7 @@ export default function Login({ onLoginSuccess }) {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent smooth-transition"
+              className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent smooth-transition text-sm md:text-base"
               disabled={loading}
             />
           </div>
@@ -69,13 +69,13 @@ export default function Login({ onLoginSuccess }) {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-lg btn-ripple smooth-transition disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 md:py-3 px-4 rounded-lg btn-ripple smooth-transition disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
           >
             {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>
         </form>
 
-        <p className="text-center text-gray-500 text-sm mt-6">
+        <p className="text-center text-gray-500 text-xs md:text-sm mt-6">
         </p>
       </div>
     </div>
