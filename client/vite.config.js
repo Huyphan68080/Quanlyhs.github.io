@@ -4,6 +4,17 @@ import { defineConfig } from 'vite';
 export default defineConfig({
   plugins: [react()],
   base: '/',
+  build: {
+    outDir: '../',
+    emptyOutDir: false,
+    rollupOptions: {
+      output: {
+        entryFileNames: '[name].js',
+        chunkFileNames: '[name].js',
+        assetFileNames: '[name].[ext]'
+      }
+    }
+  },
   define: {
     'import.meta.env.VITE_API_URL': JSON.stringify(process.env.VITE_API_URL || 'https://quanlyhs-github-io-3.onrender.com/api'),
   },
