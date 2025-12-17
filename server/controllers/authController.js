@@ -1,6 +1,50 @@
 import jwt from 'jsonwebtoken';
 import { User } from '../models/User.js';
 
+export const register = async (req, res) => {
+  try {
+    const { username, password, confirmPassword } = req.body;
+
+    if (!username || !password || !confirmPassword) {
+      return res.status(400).json({ error: 'Username, password và confirm password là bắt buộc' });
+    }
+
+    if (password !== confirmPassword) {
+      return res.status(400).json({ error: 'Mật khẩu không trùng khớp' });
+    }
+
+    if (password.length < 6) {
+      return res.status(400).json({ error: 'Mật khẩu phải ít nhất 6 ký tự' });
+    }
+
+    // Check if user already exists
+    const existingUser = await User.findOne({ username: { $regex: `^${username}$`, $options: 'i' } });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Tên đăng nhập đã tồn tại' });
+    }
+
+    // Create new user
+    const newUser = new User({
+      username,
+      passwordHash: password,
+      role: 'user'
+    });
+
+    await newUser.save();
+
+    const accessToken = jwt.sign(
+      { userId: newUser._id, username: newUser.username, role: newUser.role },
+      process.env.JWT_SECRET,
+      { expiresIn: process.env.JWT_EXPIRATION || '1h' }
+    );
+
+    res.json({ accessToken, message: 'Đăng ký thành công' });
+  } catch (error) {
+    console.error('Register error:', error);
+    res.status(500).json({ error: 'Đăng ký thất bại' });
+  }
+};
+
 export const login = async (req, res) => {
   try {
     const { username, password } = req.body;

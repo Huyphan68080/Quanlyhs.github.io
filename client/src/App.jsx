@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Login from './components/Login.jsx';
+import Register from './components/Register.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import StudentsList from './components/StudentsList.jsx';
 import StudentDetail from './components/StudentDetail.jsx';
@@ -10,6 +11,7 @@ import './index.css';
 
 export default function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [authView, setAuthView] = useState('login'); // 'login' or 'register'
   const [currentPage, setCurrentPage] = useState('dashboard');
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -45,11 +47,19 @@ export default function App() {
     setCurrentPage('dashboard');
     setSelectedStudent(null);
     setSidebarOpen(false);
+    setAuthView('login');
   };
 
   const handleLoginSuccess = () => {
     setIsLoggedIn(true);
     setCurrentPage('dashboard');
+    setAuthView('login');
+  };
+
+  const handleRegisterSuccess = () => {
+    setIsLoggedIn(true);
+    setCurrentPage('dashboard');
+    setAuthView('login');
   };
 
   const handleNavClick = (page) => {
@@ -67,7 +77,17 @@ export default function App() {
   }
 
   if (!isLoggedIn) {
-    return <Login onLoginSuccess={handleLoginSuccess} />;
+    return authView === 'login' ? (
+      <Login 
+        onLoginSuccess={handleLoginSuccess}
+        onSwitchToRegister={() => setAuthView('register')}
+      />
+    ) : (
+      <Register 
+        onRegisterSuccess={handleRegisterSuccess}
+        onSwitchToLogin={() => setAuthView('login')}
+      />
+    );
   }
 
   return (

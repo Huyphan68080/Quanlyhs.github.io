@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
 import { authAPI, setAccessToken } from '../services/api.js';
 
-export default function Login({ onLoginSuccess, onSwitchToRegister }) {
+export default function Register({ onRegisterSuccess, onSwitchToLogin }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -13,11 +14,11 @@ export default function Login({ onLoginSuccess, onSwitchToRegister }) {
     setLoading(true);
 
     try {
-      const response = await authAPI.login(username, password);
+      const response = await authAPI.register(username, password, confirmPassword);
       setAccessToken(response.data.accessToken);
-      onLoginSuccess();
+      onRegisterSuccess();
     } catch (err) {
-      setError(err.response?.data?.error || 'Login failed');
+      setError(err.response?.data?.error || 'Đăng ký thất bại');
     } finally {
       setLoading(false);
     }
@@ -28,7 +29,7 @@ export default function Login({ onLoginSuccess, onSwitchToRegister }) {
       <div className="bg-white rounded-lg md:rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-md animate-fade-in">
         <div className="text-center mb-8">
           <h1 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">Quản Lý Học Sinh</h1>
-          <p className="text-xs md:text-sm text-gray-500">Hệ thống quản lý điểm học sinh</p>
+          <p className="text-xs md:text-sm text-gray-500">Đăng ký tài khoản mới</p>
         </div>
 
         {error && (
@@ -49,6 +50,7 @@ export default function Login({ onLoginSuccess, onSwitchToRegister }) {
               placeholder="Nhập tên đăng nhập"
               className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent smooth-transition text-sm md:text-base"
               disabled={loading}
+              required
             />
           </div>
 
@@ -63,6 +65,23 @@ export default function Login({ onLoginSuccess, onSwitchToRegister }) {
               placeholder="••••••••"
               className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent smooth-transition text-sm md:text-base"
               disabled={loading}
+              required
+            />
+            <p className="text-xs text-gray-400 mt-1">Ít nhất 6 ký tự</p>
+          </div>
+
+          <div>
+            <label className="block text-xs md:text-sm font-medium text-gray-700 mb-1 md:mb-2">
+              Xác nhận mật khẩu
+            </label>
+            <input
+              type="password"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              placeholder="••••••••"
+              className="w-full px-3 md:px-4 py-2 md:py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent smooth-transition text-sm md:text-base"
+              disabled={loading}
+              required
             />
           </div>
 
@@ -71,17 +90,17 @@ export default function Login({ onLoginSuccess, onSwitchToRegister }) {
             disabled={loading}
             className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 md:py-3 px-4 rounded-lg btn-ripple smooth-transition disabled:opacity-50 disabled:cursor-not-allowed text-sm md:text-base"
           >
-            {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
+            {loading ? 'Đang đăng ký...' : 'Đăng ký'}
           </button>
         </form>
 
         <p className="text-center text-gray-600 text-xs md:text-sm mt-6">
-          Chưa có tài khoản?{' '}
+          Đã có tài khoản?{' '}
           <button
-            onClick={onSwitchToRegister}
+            onClick={onSwitchToLogin}
             className="text-blue-600 hover:text-blue-700 font-semibold"
           >
-            Đăng ký ngay
+            Đăng nhập
           </button>
         </p>
       </div>

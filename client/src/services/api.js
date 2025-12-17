@@ -55,6 +55,8 @@ api.interceptors.request.use((config) => {
 export const authAPI = {
   login: (username, password) =>
     api.post('/auth/login', { username, password }),
+  register: (username, password, confirmPassword) =>
+    api.post('/auth/register', { username, password, confirmPassword }),
   seedAdmin: () =>
     api.post('/auth/seed-admin'),
 };
