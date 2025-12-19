@@ -52,8 +52,8 @@ export default function UserGradeView({ onLogout }) {
   useEffect(() => {
     if (studentCodeInput.trim()) {
       const filtered = students.filter(student => {
-        if (!student.studentCode || !student.name) return false;
-        const studentCode = String(student.studentCode).toLowerCase();
+        if (!student.maSv || !student.name) return false;
+        const studentCode = String(student.maSv).toLowerCase();
         const name = String(student.name).toLowerCase();
         const searchTerm = studentCodeInput.toLowerCase();
         return studentCode.includes(searchTerm) || name.includes(searchTerm);
@@ -122,8 +122,8 @@ export default function UserGradeView({ onLogout }) {
     if (!studentId && studentCodeInput.trim()) {
       const searchTerm = studentCodeInput.toLowerCase().trim();
       foundStudent = students.find(s => {
-        if (!s.studentCode || !s.name) return false;
-        const studentCode = String(s.studentCode).toLowerCase();
+        if (!s.maSv || !s.name) return false;
+        const studentCode = String(s.maSv).toLowerCase();
         const name = String(s.name).toLowerCase();
         return studentCode.includes(searchTerm) || name.includes(searchTerm);
       });
@@ -147,7 +147,7 @@ export default function UserGradeView({ onLogout }) {
         const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
         const newSearch = {
           id: foundStudent._id,
-          maSv: foundStudent.studentCode,
+          maSv: foundStudent.maSv,
           name: foundStudent.name,
           class: foundStudent.class
         };
