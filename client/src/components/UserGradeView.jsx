@@ -263,12 +263,12 @@ export default function UserGradeView({ onLogout }) {
                       type="button"
                       onClick={() => {
                         setSelectedStudent(student._id);
-                        setStudentCodeInput(`${student.studentCode} - ${student.name}`);
+                        setStudentCodeInput(`${student.maSv} - ${student.name}`);
                         setFilteredStudents([]);
                       }}
                       className="w-full text-left px-4 py-2 hover:bg-blue-50 transition border-b border-gray-100 last:border-b-0"
                     >
-                      <div className="font-semibold text-gray-900">{student.studentCode}</div>
+                      <div className="font-semibold text-gray-900">{student.maSv}</div>
                       <div className="text-sm text-gray-600">{student.name}</div>
                     </button>
                   ))}
@@ -305,7 +305,7 @@ export default function UserGradeView({ onLogout }) {
               <div className="bg-green-50 p-4 rounded-lg">
                 <p className="text-gray-600 text-sm">Mã SV</p>
                 <p className="text-lg font-bold text-green-600">
-                  {students.find(s => s._id === selectedStudent)?.studentCode || 'N/A'}
+                  {students.find(s => s._id === selectedStudent)?.maSv || 'N/A'}
                 </p>
               </div>
               <div className="bg-purple-50 p-4 rounded-lg">
@@ -386,7 +386,7 @@ export default function UserGradeView({ onLogout }) {
                       <div className="text-3xl text-center mb-2">{medals[idx]}</div>
                       <p className="text-sm text-gray-600">Xếp Hạng {idx + 1}</p>
                       <p className="text-lg font-bold text-gray-800">{student.name}</p>
-                      <p className="text-sm text-gray-600 mb-2">Mã SV: {student.studentCode}</p>
+                      <p className="text-sm text-gray-600 mb-2">Mã SV: {student.maSv}</p>
                       <p className="text-2xl font-bold text-orange-600">
                         {student.averageGrade?.toFixed(2) || 'N/A'}/10
                       </p>
