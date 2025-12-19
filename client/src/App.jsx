@@ -9,6 +9,7 @@ import ClassesList from './components/ClassesList.jsx';
 import UserGradeView from './components/UserGradeView.jsx';
 import UserDashboard from './components/UserDashboard.jsx';
 import UserProfile from './components/UserProfile.jsx';
+import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { getAccessToken, clearAccessToken, isAdmin } from './services/api.js';
 import './index.css';
 
@@ -287,30 +288,32 @@ export default function App() {
 
         {/* Content Area */}
         <div className="flex-1 overflow-auto p-4 md:p-8">
-          {selectedStudent && currentPage === 'students' ? (
-            <StudentDetail 
-              student={selectedStudent} 
-              onBack={() => setSelectedStudent(null)}
-              onRefresh={handleRefreshDashboard}
-              onRefreshCharts={handleRefreshCharts}
-              onRefreshStudents={handleRefreshStudents}
-              onUpdateStudent={(updatedStudent) => setSelectedStudent(updatedStudent)}
-            />
-          ) : currentPage === 'dashboard' ? (
-            <Dashboard key={dashboardRefreshKey} refreshKey={dashboardRefreshKey} onNavigate={setCurrentPage} />
-          ) : currentPage === 'user-dashboard' ? (
-            <UserDashboard onNavigate={setCurrentPage} onLogout={handleLogout} />
-          ) : currentPage === 'profile' ? (
-            <UserProfile onLogout={handleLogout} onBack={() => setCurrentPage(userRole === 'admin' ? 'dashboard' : 'user-dashboard')} />
-          ) : currentPage === 'grade-view' ? (
-            <UserGradeView onLogout={handleLogout} />
-          ) : currentPage === 'students' ? (
-            <StudentsList onSelectStudent={(student) => setSelectedStudent(student)} />
-          ) : currentPage === 'charts' ? (
-            <ChartsPanel key={chartsRefreshKey} />
-          ) : currentPage === 'classes' ? (
-            <ClassesList />
-          ) : null}
+          <ErrorBoundary>
+            {selectedStudent && currentPage === 'students' ? (
+              <StudentDetail 
+                student={selectedStudent} 
+                onBack={() => setSelectedStudent(null)}
+                onRefresh={handleRefreshDashboard}
+                onRefreshCharts={handleRefreshCharts}
+                onRefreshStudents={handleRefreshStudents}
+                onUpdateStudent={(updatedStudent) => setSelectedStudent(updatedStudent)}
+              />
+            ) : currentPage === 'dashboard' ? (
+              <Dashboard key={dashboardRefreshKey} refreshKey={dashboardRefreshKey} onNavigate={setCurrentPage} />
+            ) : currentPage === 'user-dashboard' ? (
+              <UserDashboard onNavigate={setCurrentPage} onLogout={handleLogout} />
+            ) : currentPage === 'profile' ? (
+              <UserProfile onLogout={handleLogout} onBack={() => setCurrentPage(userRole === 'admin' ? 'dashboard' : 'user-dashboard')} />
+            ) : currentPage === 'grade-view' ? (
+              <UserGradeView onLogout={handleLogout} />
+            ) : currentPage === 'students' ? (
+              <StudentsList onSelectStudent={(student) => setSelectedStudent(student)} />
+            ) : currentPage === 'charts' ? (
+              <ChartsPanel key={chartsRefreshKey} />
+            ) : currentPage === 'classes' ? (
+              <ClassesList />
+            ) : null}
+          </ErrorBoundary>
         </div>
       </main>
     </div>
