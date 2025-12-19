@@ -51,10 +51,13 @@ export default function UserGradeView({ onLogout }) {
   // Filter students based on input
   useEffect(() => {
     if (studentCodeInput.trim()) {
-      const filtered = students.filter(student =>
-        student.studentCode.toLowerCase().includes(studentCodeInput.toLowerCase()) ||
-        student.name.toLowerCase().includes(studentCodeInput.toLowerCase())
-      );
+      const filtered = students.filter(student => {
+        if (!student.studentCode || !student.name) return false;
+        const studentCode = String(student.studentCode).toLowerCase();
+        const name = String(student.name).toLowerCase();
+        const searchTerm = studentCodeInput.toLowerCase();
+        return studentCode.includes(searchTerm) || name.includes(searchTerm);
+      });
       setFilteredStudents(filtered);
     } else {
       setFilteredStudents([]);
@@ -118,10 +121,12 @@ export default function UserGradeView({ onLogout }) {
     
     if (!studentId && studentCodeInput.trim()) {
       const searchTerm = studentCodeInput.toLowerCase().trim();
-      foundStudent = students.find(s =>
-        s.studentCode.toLowerCase().includes(searchTerm) ||
-        s.name.toLowerCase().includes(searchTerm)
-      );
+      foundStudent = students.find(s => {
+        if (!s.studentCode || !s.name) return false;
+        const studentCode = String(s.studentCode).toLowerCase();
+        const name = String(s.name).toLowerCase();
+        return studentCode.includes(searchTerm) || name.includes(searchTerm);
+      });
       if (!foundStudent) {
         setError('Không tìm thấy học sinh này trong lớp');
         return;
