@@ -28,7 +28,7 @@ export default function UserGradeView({ onLogout }) {
     try {
       setLoading(true);
       const response = await studentsAPI.getClasses();
-      setClasses(response);
+      setClasses(response.data || response);
       setError('');
     } catch (err) {
       setError('Lỗi tải danh sách lớp');
@@ -42,7 +42,7 @@ export default function UserGradeView({ onLogout }) {
     try {
       setLoading(true);
       const response = await studentsAPI.getByClass(selectedClass);
-      setStudents(response);
+      setStudents(response.data || response);
       setSelectedStudent('');
       setStudentGrades([]);
       setTopStudents([]);
@@ -65,7 +65,7 @@ export default function UserGradeView({ onLogout }) {
     try {
       setLoading(true);
       const grades = await gradesAPI.getByStudent(selectedStudent);
-      setStudentGrades(grades);
+      setStudentGrades(grades.data || grades);
       setError('');
       
       // Load top students for comparison
@@ -81,7 +81,7 @@ export default function UserGradeView({ onLogout }) {
   const loadTopStudents = async () => {
     try {
       const response = await gradesAPI.getTopStudents(selectedClass);
-      setTopStudents(response.slice(0, 3));
+      setTopStudents((response.data || response).slice(0, 3));
     } catch (err) {
       console.error('Lỗi tải top students:', err);
     }
