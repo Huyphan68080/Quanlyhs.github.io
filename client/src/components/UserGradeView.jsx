@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { studentsAPI, gradesAPI } from '../services/api';
+import { studentsAPI, gradesAPI, getAccessToken } from '../services/api';
 
 export default function UserGradeView({ onLogout }) {
   const [classes, setClasses] = useState([]);
@@ -11,10 +11,18 @@ export default function UserGradeView({ onLogout }) {
   const [topStudents, setTopStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [isReady, setIsReady] = useState(false);
 
   // Load classes on mount
   useEffect(() => {
-    loadClasses();
+    // Wait for token to be available
+    const token = getAccessToken();
+    if (token) {
+      setIsReady(true);
+      loadClasses();
+    } else {
+      setError('Vui lòng đăng nhập lại');
+    }
   }, []);
 
   // Load students when class changes
@@ -31,8 +39,13 @@ export default function UserGradeView({ onLogout }) {
       setClasses(response.data || response);
       setError('');
     } catch (err) {
-      setError('Lỗi tải danh sách lớp');
-      console.error(err);
+      console.error('Lỗi tải danh sách lớp:', err);
+      if (err.response?.status === 403 || err.response?.status === 401) {
+        setError('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        onLogout();
+      } else {
+        setError('Lỗi tải danh sách lớp: ' + (err.response?.data?.error || err.message));
+      }
     } finally {
       setLoading(false);
     }
@@ -48,8 +61,13 @@ export default function UserGradeView({ onLogout }) {
       setTopStudents([]);
       setError('');
     } catch (err) {
-      setError('Lỗi tải danh sách học sinh');
-      console.error(err);
+      console.error('Lỗi tải danh sách học sinh:', err);
+      if (err.response?.status === 403 || err.response?.status === 401) {
+        setError('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        onLogout();
+      } else {
+        setError('Lỗi tải danh sách học sinh: ' + (err.response?.data?.error || err.message));
+      }
     } finally {
       setLoading(false);
     }
@@ -71,8 +89,13 @@ export default function UserGradeView({ onLogout }) {
       // Load top students for comparison
       await loadTopStudents();
     } catch (err) {
-      setError('Lỗi tải điểm của học sinh');
-      console.error(err);
+      console.error('Lỗi tải điểm của học sinh:', err);
+      if (err.response?.status === 403 || err.response?.status === 401) {
+        setError('Phiên đăng nhập hết hạn. Vui lòng đăng nhập lại.');
+        onLogout();
+      } else {
+        setError('Lỗi tải điểm: ' + (err.response?.data?.error || err.message));
+      }
     } finally {
       setLoading(false);
     }
