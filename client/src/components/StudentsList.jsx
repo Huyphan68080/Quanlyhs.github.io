@@ -146,6 +146,21 @@ export default function StudentsList({ onSelectStudent }) {
                         Chi tiết
                       </button>
                       <button
+                        onClick={() => {
+                          // Lưu dữ liệu học sinh vào localStorage để UserGradeView sử dụng
+                          localStorage.setItem('selectedStudentData', JSON.stringify({
+                            id: student._id,
+                            maSv: student.maSv,
+                            name: student.name,
+                            class: student.class
+                          }));
+                          window.location.href = `/Quanlyhs.github.io/#/grade-view`;
+                        }}
+                        className="text-green-600 hover:text-green-700 font-semibold"
+                      >
+                        Xem Điểm
+                      </button>
+                      <button
                         onClick={() => setDeleteConfirm(student._id)}
                         className="text-red-600 hover:text-red-700 font-semibold"
                       >
@@ -177,6 +192,20 @@ export default function StudentsList({ onSelectStudent }) {
                     className="flex-1 text-blue-600 hover:bg-blue-50 font-semibold py-2 rounded text-xs"
                   >
                     Chi tiết
+                  </button>
+                  <button
+                    onClick={() => {
+                      localStorage.setItem('selectedStudentData', JSON.stringify({
+                        id: student._id,
+                        maSv: student.maSv,
+                        name: student.name,
+                        class: student.class
+                      }));
+                      window.location.href = `/Quanlyhs.github.io/#/grade-view`;
+                    }}
+                    className="flex-1 text-green-600 hover:bg-green-50 font-semibold py-2 rounded text-xs"
+                  >
+                    Xem Điểm
                   </button>
                   <button
                     onClick={() => setDeleteConfirm(student._id)}

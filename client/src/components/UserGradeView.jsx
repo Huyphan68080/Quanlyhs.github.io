@@ -22,6 +22,20 @@ export default function UserGradeView({ onLogout }) {
     if (token) {
       setIsReady(true);
       loadClasses();
+      
+      // Check if there's pre-selected student data from StudentsList
+      const preSelected = localStorage.getItem('selectedStudentData');
+      if (preSelected) {
+        try {
+          const data = JSON.parse(preSelected);
+          setSelectedClass(data.class);
+          setStudentCodeInput(`${data.maSv} - ${data.name}`);
+          setSelectedStudent(data.id);
+          localStorage.removeItem('selectedStudentData'); // Clear after use
+        } catch (err) {
+          console.error('Error parsing pre-selected student:', err);
+        }
+      }
     } else {
       setError('Vui lòng đăng nhập lại');
     }
@@ -100,16 +114,21 @@ export default function UserGradeView({ onLogout }) {
 
     // Nếu user nhập nhưng chưa chọn từ list, tìm student từ danh sách
     let studentId = selectedStudent;
+    let foundStudent = null;
+    
     if (!studentId && studentCodeInput.trim()) {
-      const found = students.find(s =>
-        s.studentCode.toLowerCase() === studentCodeInput.toLowerCase() ||
-        s.name.toLowerCase() === studentCodeInput.toLowerCase()
+      const searchTerm = studentCodeInput.toLowerCase().trim();
+      foundStudent = students.find(s =>
+        s.studentCode.toLowerCase().includes(searchTerm) ||
+        s.name.toLowerCase().includes(searchTerm)
       );
-      if (!found) {
+      if (!foundStudent) {
         setError('Không tìm thấy học sinh này trong lớp');
         return;
       }
-      studentId = found._id;
+      studentId = foundStudent._id;
+    } else if (selectedStudent) {
+      foundStudent = students.find(s => s._id === selectedStudent);
     }
 
     try {
@@ -117,6 +136,22 @@ export default function UserGradeView({ onLogout }) {
       const grades = await gradesAPI.getByStudent(studentId);
       setStudentGrades(grades.data || grades);
       setError('');
+      
+      // Lưu vào lịch sử tìm kiếm
+      if (foundStudent) {
+        const recentSearches = JSON.parse(localStorage.getItem('recentSearches') || '[]');
+        const newSearch = {
+          id: foundStudent._id,
+          maSv: foundStudent.studentCode,
+          name: foundStudent.name,
+          class: foundStudent.class
+        };
+        
+        // Xóa nếu đã tồn tại, thêm vào đầu
+        const filtered = recentSearches.filter(s => s.id !== foundStudent._id);
+        filtered.unshift(newSearch);
+        localStorage.setItem('recentSearches', JSON.stringify(filtered.slice(0, 20))); // Giữ 20 mục gần nhất
+      }
       
       // Load top students for comparison
       await loadTopStudents();

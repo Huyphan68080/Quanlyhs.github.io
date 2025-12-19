@@ -7,6 +7,8 @@ import StudentDetail from './components/StudentDetail.jsx';
 import ChartsPanel from './components/ChartsPanel.jsx';
 import ClassesList from './components/ClassesList.jsx';
 import UserGradeView from './components/UserGradeView.jsx';
+import UserDashboard from './components/UserDashboard.jsx';
+import UserProfile from './components/UserProfile.jsx';
 import { getAccessToken, clearAccessToken, isAdmin } from './services/api.js';
 import './index.css';
 
@@ -61,8 +63,8 @@ export default function App() {
     setIsLoggedIn(true);
     const role = isAdmin() ? 'admin' : 'user';
     setUserRole(role);
-    // Redirect user to grade-view, admin to dashboard
-    setCurrentPage(role === 'admin' ? 'dashboard' : 'grade-view');
+    // Redirect admin to dashboard, user to user-dashboard
+    setCurrentPage(role === 'admin' ? 'dashboard' : 'user-dashboard');
     setAuthView('login');
   };
 
@@ -70,7 +72,7 @@ export default function App() {
     setIsLoggedIn(true);
     // New registered users are 'user' role
     setUserRole('user');
-    setCurrentPage('grade-view');
+    setCurrentPage('user-dashboard');
     setAuthView('login');
   };
 
@@ -155,6 +157,23 @@ export default function App() {
             </button>
           )}
 
+          {/* User Dashboard - For non-admin users */}
+          {userRole === 'user' && (
+            <button
+              onClick={() => handleNavClick('user-dashboard')}
+              className={`w-full text-left px-4 py-3 rounded-lg font-medium smooth-transition flex items-center gap-3 ${
+                currentPage === 'user-dashboard'
+                  ? 'bg-blue-100 text-blue-600'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-3m0 0l7-4 7 4M5 9v10a1 1 0 001 1h12a1 1 0 001-1V9m-9 11l4-2m-6 0l-4-2" />
+              </svg>
+              <span>Trang Chủ</span>
+            </button>
+          )}
+
           {/* Tra Cứu Điểm - For all users */}
           <button
             onClick={() => handleNavClick('grade-view')}
@@ -223,6 +242,21 @@ export default function App() {
         </nav>
 
         <div className="border-t pt-6">
+          {/* Profile Button - For all users */}
+          <button
+            onClick={() => handleNavClick('profile')}
+            className={`w-full text-left px-4 py-3 rounded-lg font-medium smooth-transition flex items-center gap-3 mb-3 ${
+              currentPage === 'profile'
+                ? 'bg-green-100 text-green-600'
+                : 'text-gray-600 hover:bg-gray-100'
+            }`}
+          >
+            <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+            <span>Hồ Sơ</span>
+          </button>
+
           <button
             onClick={handleLogout}
             className="w-full bg-red-50 hover:bg-red-100 text-red-600 font-semibold py-2 px-4 rounded-lg smooth-transition flex items-center justify-center gap-2"
@@ -264,6 +298,10 @@ export default function App() {
             />
           ) : currentPage === 'dashboard' ? (
             <Dashboard key={dashboardRefreshKey} refreshKey={dashboardRefreshKey} onNavigate={setCurrentPage} />
+          ) : currentPage === 'user-dashboard' ? (
+            <UserDashboard onNavigate={setCurrentPage} onLogout={handleLogout} />
+          ) : currentPage === 'profile' ? (
+            <UserProfile onLogout={handleLogout} onBack={() => setCurrentPage(userRole === 'admin' ? 'dashboard' : 'user-dashboard')} />
           ) : currentPage === 'grade-view' ? (
             <UserGradeView onLogout={handleLogout} />
           ) : currentPage === 'students' ? (
