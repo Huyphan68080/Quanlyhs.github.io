@@ -345,23 +345,36 @@ export default function UserGradeView({ onLogout }) {
               </thead>
               <tbody>
                 {studentGrades.map((grade, idx) => {
-                  const gradeValue = parseFloat(grade.grade) || 0;
+                  // Xử lý các loại điểm đặc biệt (Đạt, Không Đạt) vs điểm số
                   let gradeLevel = 'Cần Cải Thiện';
-                  if (gradeValue >= 8) gradeLevel = 'Giỏi';
-                  else if (gradeValue >= 6.5) gradeLevel = 'Khá';
-                  else if (gradeValue >= 5) gradeLevel = 'Trung Bình';
+                  let colorClass = 'bg-red-100 text-red-700';
+                  
+                  if (typeof grade.grade === 'string' && (grade.grade.toLowerCase() === 'đạt' || grade.grade.toLowerCase() === 'dat')) {
+                    gradeLevel = 'Đạt';
+                    colorClass = 'bg-green-100 text-green-700';
+                  } else if (typeof grade.grade === 'string' && (grade.grade.toLowerCase() === 'không đạt' || grade.grade.toLowerCase() === 'khong dat')) {
+                    gradeLevel = 'Không Đạt';
+                    colorClass = 'bg-red-100 text-red-700';
+                  } else {
+                    const gradeValue = parseFloat(grade.grade) || 0;
+                    if (gradeValue >= 8) {
+                      gradeLevel = 'Giỏi';
+                      colorClass = 'bg-green-100 text-green-700';
+                    } else if (gradeValue >= 6.5) {
+                      gradeLevel = 'Khá';
+                      colorClass = 'bg-blue-100 text-blue-700';
+                    } else if (gradeValue >= 5) {
+                      gradeLevel = 'Trung Bình';
+                      colorClass = 'bg-yellow-100 text-yellow-700';
+                    }
+                  }
 
                   return (
                     <tr key={idx} className="border-b hover:bg-gray-50">
                       <td className="px-4 py-2">{grade.subject}</td>
                       <td className="px-4 py-2 font-bold text-blue-600">{grade.grade}</td>
                       <td className="px-4 py-2">
-                        <span className={`px-2 py-1 rounded text-xs font-semibold ${
-                          gradeValue >= 8 ? 'bg-green-100 text-green-700' :
-                          gradeValue >= 6.5 ? 'bg-blue-100 text-blue-700' :
-                          gradeValue >= 5 ? 'bg-yellow-100 text-yellow-700' :
-                          'bg-red-100 text-red-700'
-                        }`}>
+                        <span className={`px-2 py-1 rounded text-xs font-semibold ${colorClass}`}>
                           {gradeLevel}
                         </span>
                       </td>
