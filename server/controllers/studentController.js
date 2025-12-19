@@ -100,12 +100,14 @@ export const getStudentsByClass = async (req, res) => {
   try {
     const { classId } = req.params;
 
+    // Find classroom by ID to get its name
     const classroom = await Classroom.findById(classId);
     if (!classroom) {
       return res.status(404).json({ error: 'Class not found' });
     }
 
-    const students = await Student.find({ class: classId }).sort({ name: 1 });
+    // Find students by class name (not ID)
+    const students = await Student.find({ class: classroom.name }).sort({ name: 1 });
     res.json(students);
   } catch (error) {
     console.error('Get students by class error:', error);
