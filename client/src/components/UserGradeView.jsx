@@ -6,12 +6,14 @@ export default function UserGradeView({ onLogout }) {
   const [classes, setClasses] = useState([]);
   const [students, setStudents] = useState([]);
   const [selectedClass, setSelectedClass] = useState('');
+  const [studentCodeInput, setStudentCodeInput] = useState('');
   const [selectedStudent, setSelectedStudent] = useState('');
   const [studentGrades, setStudentGrades] = useState([]);
   const [topStudents, setTopStudents] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [isReady, setIsReady] = useState(false);
+  const [filteredStudents, setFilteredStudents] = useState([]);
 
   // Load classes on mount
   useEffect(() => {
@@ -31,6 +33,19 @@ export default function UserGradeView({ onLogout }) {
       loadStudentsByClass();
     }
   }, [selectedClass]);
+
+  // Filter students based on input
+  useEffect(() => {
+    if (studentCodeInput.trim()) {
+      const filtered = students.filter(student =>
+        student.studentCode.toLowerCase().includes(studentCodeInput.toLowerCase()) ||
+        student.name.toLowerCase().includes(studentCodeInput.toLowerCase())
+      );
+      setFilteredStudents(filtered);
+    } else {
+      setFilteredStudents([]);
+    }
+  }, [studentCodeInput, students]);
 
   const loadClasses = async () => {
     try {
@@ -56,9 +71,11 @@ export default function UserGradeView({ onLogout }) {
       setLoading(true);
       const response = await studentsAPI.getByClass(selectedClass);
       setStudents(response.data || response);
+      setStudentCodeInput('');
       setSelectedStudent('');
       setStudentGrades([]);
       setTopStudents([]);
+      setFilteredStudents([]);
       setError('');
     } catch (err) {
       console.error('Lỗi tải danh sách học sinh:', err);
@@ -76,7 +93,7 @@ export default function UserGradeView({ onLogout }) {
   const handleSearchStudent = async (e) => {
     e.preventDefault();
     if (!selectedStudent) {
-      setError('Vui lòng chọn học sinh');
+      setError('Vui lòng chọn học sinh từ danh sách');
       return;
     }
 
@@ -168,24 +185,40 @@ export default function UserGradeView({ onLogout }) {
               </select>
             </div>
 
-            {/* Student Select */}
-            <div>
+            {/* Student Code Input with Autocomplete */}
+            <div className="relative">
               <label className="block text-sm font-medium text-gray-700 mb-2">
-                Chọn Học Sinh (Mã SV - Tên)
+                Nhập Mã SV hoặc Tên Học Sinh
               </label>
-              <select
-                value={selectedStudent}
-                onChange={(e) => setSelectedStudent(e.target.value)}
+              <input
+                type="text"
+                value={studentCodeInput}
+                onChange={(e) => setStudentCodeInput(e.target.value)}
+                placeholder="Nhập mã SV hoặc tên..."
                 className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={!selectedClass || loading}
-              >
-                <option value="">-- Chọn học sinh --</option>
-                {students.map(student => (
-                  <option key={student._id} value={student._id}>
-                    {student.studentCode} - {student.name}
-                  </option>
-                ))}
-              </select>
+              />
+              
+              {/* Autocomplete Dropdown */}
+              {filteredStudents.length > 0 && studentCodeInput && (
+                <div className="absolute top-full left-0 right-0 mt-1 bg-white border border-gray-300 rounded-lg shadow-lg z-10 max-h-48 overflow-y-auto">
+                  {filteredStudents.map(student => (
+                    <button
+                      key={student._id}
+                      type="button"
+                      onClick={() => {
+                        setSelectedStudent(student._id);
+                        setStudentCodeInput(`${student.studentCode} - ${student.name}`);
+                        setFilteredStudents([]);
+                      }}
+                      className="w-full text-left px-4 py-2 hover:bg-blue-50 transition border-b border-gray-100 last:border-b-0"
+                    >
+                      <div className="font-semibold text-gray-900">{student.studentCode}</div>
+                      <div className="text-sm text-gray-600">{student.name}</div>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
           </div>
 
