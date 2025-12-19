@@ -92,14 +92,29 @@ export default function UserGradeView({ onLogout }) {
 
   const handleSearchStudent = async (e) => {
     e.preventDefault();
-    if (!selectedStudent) {
-      setError('Vui lòng chọn học sinh từ danh sách');
+    
+    if (!selectedStudent && !studentCodeInput.trim()) {
+      setError('Vui lòng nhập hoặc chọn mã SV');
       return;
+    }
+
+    // Nếu user nhập nhưng chưa chọn từ list, tìm student từ danh sách
+    let studentId = selectedStudent;
+    if (!studentId && studentCodeInput.trim()) {
+      const found = students.find(s =>
+        s.studentCode.toLowerCase() === studentCodeInput.toLowerCase() ||
+        s.name.toLowerCase() === studentCodeInput.toLowerCase()
+      );
+      if (!found) {
+        setError('Không tìm thấy học sinh này trong lớp');
+        return;
+      }
+      studentId = found._id;
     }
 
     try {
       setLoading(true);
-      const grades = await gradesAPI.getByStudent(selectedStudent);
+      const grades = await gradesAPI.getByStudent(studentId);
       setStudentGrades(grades.data || grades);
       setError('');
       
@@ -224,7 +239,7 @@ export default function UserGradeView({ onLogout }) {
 
           <button
             type="submit"
-            disabled={!selectedStudent || loading}
+            disabled={(!selectedStudent && !studentCodeInput.trim()) || loading}
             className="w-full md:w-auto px-6 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition disabled:bg-gray-400 disabled:cursor-not-allowed"
           >
             {loading ? 'Đang tải...' : 'Tra Cứu'}

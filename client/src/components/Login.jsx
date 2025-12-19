@@ -5,7 +5,6 @@ export default function Login({ onLoginSuccess, onSwitchToRegister }) {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
   const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
@@ -28,23 +27,6 @@ export default function Login({ onLoginSuccess, onSwitchToRegister }) {
     }
   };
 
-  const handleSeedAdmin = async () => {
-    setLoading(true);
-    setError('');
-    setSuccess('');
-    try {
-      const response = await authAPI.seedAdmin();
-      setSuccess('Tài khoản admin mặc định đã được tạo. Username: HuyPhan, Password: Huyphan19082008');
-      setUsername('HuyPhan');
-      setPassword('Huyphan19082008');
-    } catch (err) {
-      const errorMsg = err.response?.data?.message || err.response?.data?.error || 'Seed failed';
-      setSuccess(errorMsg);
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center p-4">
       <div className="bg-white rounded-lg md:rounded-2xl shadow-xl p-6 md:p-8 w-full max-w-md animate-fade-in">
@@ -56,12 +38,6 @@ export default function Login({ onLoginSuccess, onSwitchToRegister }) {
         {error && (
           <div className="bg-red-50 border border-red-200 text-red-700 px-3 md:px-4 py-2 md:py-3 rounded-lg mb-6 text-xs md:text-sm">
             {error}
-          </div>
-        )}
-
-        {success && (
-          <div className="bg-green-50 border border-green-200 text-green-700 px-3 md:px-4 py-2 md:py-3 rounded-lg mb-6 text-xs md:text-sm">
-            {success}
           </div>
         )}
 
@@ -102,17 +78,6 @@ export default function Login({ onLoginSuccess, onSwitchToRegister }) {
             {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
           </button>
         </form>
-
-        <div className="mt-4 space-y-2">
-          <button
-            type="button"
-            onClick={handleSeedAdmin}
-            disabled={loading}
-            className="w-full bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 md:py-3 px-4 rounded-lg transition disabled:opacity-50 disabled:cursor-not-allowed text-xs md:text-sm"
-          >
-            Tạo Tài Khoản Mặc Định
-          </button>
-        </div>
 
         <p className="text-center text-gray-600 text-xs md:text-sm mt-6">
           Chưa có tài khoản?{' '}
