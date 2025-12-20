@@ -5,7 +5,7 @@ const CLASSES = ['10A1', '10A2', '10A3', '10A4', '10A5', '10A6', '10A7', '10A8',
                  '11A1', '11A2', '11A3', '11A4', '11A5', '11A6', '11A7', '11A8', '11A9', '11A10',
                  '12A1', '12A2', '12A3', '12A4', '12A5', '12A6', '12A7', '12A8', '12A9', '12A10'];
 
-export default function StudentsList({ onSelectStudent }) {
+export default function StudentsList({ onSelectStudent, onNavigate }) {
   const [students, setStudents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -147,14 +147,15 @@ export default function StudentsList({ onSelectStudent }) {
                       </button>
                       <button
                         onClick={() => {
-                          // Lưu dữ liệu học sinh vào localStorage để UserGradeView sử dụng
                           localStorage.setItem('selectedStudentData', JSON.stringify({
                             id: student._id,
                             maSv: student.maSv,
                             name: student.name,
                             class: student.class
                           }));
-                          window.location.href = `/Quanlyhs.github.io/#/grade-view`;
+                          if (onNavigate) {
+                            onNavigate('grade-view');
+                          }
                         }}
                         className="text-green-600 hover:text-green-700 font-semibold"
                       >
@@ -201,7 +202,9 @@ export default function StudentsList({ onSelectStudent }) {
                         name: student.name,
                         class: student.class
                       }));
-                      window.location.href = `/Quanlyhs.github.io/#/grade-view`;
+                      if (onNavigate) {
+                        onNavigate('grade-view');
+                      }
                     }}
                     className="flex-1 text-green-600 hover:bg-green-50 font-semibold py-2 rounded text-xs"
                   >

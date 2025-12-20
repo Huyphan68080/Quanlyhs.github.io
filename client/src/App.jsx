@@ -325,7 +325,7 @@ export default function App() {
             ) : currentPage === 'grade-view' ? (
               <UserGradeView onLogout={handleLogout} />
             ) : currentPage === 'students' ? (
-              <StudentsList onSelectStudent={(student) => setSelectedStudent(student)} />
+              <StudentsList onSelectStudent={(student) => setSelectedStudent(student)} onNavigate={setCurrentPage} />
             ) : currentPage === 'charts' ? (
               <ChartsPanel key={chartsRefreshKey} />
             ) : currentPage === 'classes' ? (
