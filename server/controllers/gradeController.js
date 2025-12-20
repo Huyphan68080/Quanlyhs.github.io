@@ -275,3 +275,43 @@ export const getTopStudentsByClass = async (req, res) => {
   }
 };
 
+// Get student grades by student code (maSv) - for user grade lookup
+export const getStudentGradesByCode = async (req, res) => {
+  try {
+    const { maSv } = req.params;
+
+    const student = await Student.findOne({ maSv: maSv });
+    if (!student) {
+      return res.status(404).json({ error: 'Student not found' });
+    }
+
+    const grades = await Grade.find({ studentId: student._id });
+    const gradesObj = {};
+    let sum = 0;
+    let count = 0;
+
+    SUBJECTS.forEach(subject => {
+      const gradeRecord = grades.find(g => g.subject === subject);
+      gradesObj[subject] = gradeRecord ? gradeRecord.score : null;
+      // Only include numeric scores in average calculation (exclude TheDuc)
+      if (gradeRecord && subject !== 'TheDuc' && typeof gradeRecord.score === 'number') {
+        sum += gradeRecord.score;
+        count += 1;
+      }
+    });
+
+    const average = count > 0 ? sum / count : 0;
+    const classification = getClassification(average);
+
+    res.json({
+      student,
+      grades: gradesObj,
+      average: parseFloat(average.toFixed(2)),
+      classification
+    });
+  } catch (error) {
+    console.error('Get grades by code error:', error);
+    res.status(500).json({ error: 'Failed to fetch grades' });
+  }
+};
+

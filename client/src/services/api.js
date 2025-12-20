@@ -114,6 +114,8 @@ export const studentsAPI = {
 export const gradesAPI = {
   getStudentGrades: (studentId) =>
     api.get(`/grades/${studentId}/grades`),
+  getStudentGradesByCode: (maSv) =>
+    api.get(`/grades/code/${maSv}`),
   updateStudentGrades: (studentId, grades) =>
     api.post(`/grades/${studentId}/grades`, grades),
   getClassGrades: (className) =>

@@ -224,9 +224,11 @@ export default function StudentDetail({ student, onBack, onRefresh, onRefreshCha
                     {grades[subject.key] !== null && grades[subject.key] !== undefined ? (
                       <span className={`font-semibold ${
                         subject.key === 'TheDuc' 
-                          ? grades[subject.key] === 'Đạt' 
+                          ? (grades[subject.key] === 'Đạt' || grades[subject.key] === 'dat')
                             ? 'text-green-600' 
-                            : 'text-red-600'
+                            : (grades[subject.key] === 'Không Đạt' || grades[subject.key] === 'khong dat')
+                            ? 'text-red-600'
+                            : 'text-gray-900'
                           : 'text-gray-900'
                       }`}>
                         {grades[subject.key]}
