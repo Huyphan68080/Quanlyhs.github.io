@@ -34,6 +34,43 @@ export default function UserGradeView({ onLogout }) {
     }
   }, []);
 
+  // Auto-search when studentCodeInput is filled from pre-selected data
+  useEffect(() => {
+    if (studentCodeInput.trim() && isReady && studentGrades.length === 0) {
+      // Auto-trigger search
+      const autoSearch = async () => {
+        try {
+          setLoading(true);
+          setError('');
+          
+          const response = await gradesAPI.getStudentGradesByCode(studentCodeInput.trim());
+          
+          setStudentInfo(response.data.student);
+          
+          const gradesArray = Object.entries(response.data.grades).map(([subject, score]) => ({
+            subject,
+            grade: score
+          }));
+          
+          setStudentGrades(gradesArray);
+          setAverage(response.data.average);
+          setClassification(response.data.classification);
+        } catch (err) {
+          console.error('Lỗi tải điểm:', err);
+          if (err.response?.status === 404) {
+            setError('Không tìm thấy học sinh với mã này');
+          } else {
+            setError('Lỗi tải điểm: ' + (err.response?.data?.error || err.message));
+          }
+        } finally {
+          setLoading(false);
+        }
+      };
+      
+      autoSearch();
+    }
+  }, [studentCodeInput, isReady]);
+
   const handleSearchStudent = async (e) => {
     e.preventDefault();
     
