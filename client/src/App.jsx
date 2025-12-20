@@ -9,6 +9,7 @@ import ClassesList from './components/ClassesList.jsx';
 import UserGradeView from './components/UserGradeView.jsx';
 import UserDashboard from './components/UserDashboard.jsx';
 import UserProfile from './components/UserProfile.jsx';
+import UserManagement from './components/UserManagement.jsx';
 import ErrorBoundary from './components/ErrorBoundary.jsx';
 import { getAccessToken, clearAccessToken, isAdmin } from './services/api.js';
 import './index.css';
@@ -240,6 +241,23 @@ export default function App() {
               <span>In Danh Sách</span>
             </button>
           )}
+
+          {/* Quản Lý User - Admin only */}
+          {userRole === 'admin' && (
+            <button
+              onClick={() => handleNavClick('users')}
+              className={`w-full text-left px-4 py-3 rounded-lg font-medium smooth-transition flex items-center gap-3 ${
+                currentPage === 'users'
+                  ? 'bg-blue-100 text-blue-600'
+                  : 'text-gray-600 hover:bg-gray-100'
+              }`}
+            >
+              <svg className="w-5 h-5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
+              </svg>
+              <span>Quản Lý User</span>
+            </button>
+          )}
         </nav>
 
         <div className="border-t pt-6">
@@ -312,6 +330,8 @@ export default function App() {
               <ChartsPanel key={chartsRefreshKey} />
             ) : currentPage === 'classes' ? (
               <ClassesList />
+            ) : currentPage === 'users' ? (
+              <UserManagement />
             ) : null}
           </ErrorBoundary>
         </div>

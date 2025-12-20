@@ -132,7 +132,7 @@ export default function Dashboard({ onNavigate, refreshKey }) {
       {/* Quick Actions */}
       <div className="bg-white rounded-lg md:rounded-xl shadow-md p-4 md:p-6">
         <h2 className="text-base md:text-lg font-bold text-gray-900 mb-3 md:mb-4">Thao tác nhanh</h2>
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 md:gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
           <button
             onClick={() => onNavigate('students')}
             className="flex items-center justify-between bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-600 hover:to-blue-700 text-white px-4 md:px-6 py-3 md:py-4 rounded-lg btn-ripple smooth-transition text-sm md:text-base"
@@ -149,6 +149,15 @@ export default function Dashboard({ onNavigate, refreshKey }) {
             <span className="font-semibold">Xem biểu đồ</span>
             <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+            </svg>
+          </button>
+          <button
+            onClick={() => onNavigate('users')}
+            className="flex items-center justify-between bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-4 md:px-6 py-3 md:py-4 rounded-lg btn-ripple smooth-transition text-sm md:text-base"
+          >
+            <span className="font-semibold">Quản lý User</span>
+            <svg className="w-4 h-4 md:w-5 md:h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4.354a4 4 0 110 5.292M15 21H3v-2a6 6 0 0112 0v2zm0 0h6v-2a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z" />
             </svg>
           </button>
         </div>

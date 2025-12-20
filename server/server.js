@@ -7,6 +7,7 @@ import authRoutes from './routes/authRoutes.js';
 import studentRoutes from './routes/studentRoutes.js';
 import gradeRoutes from './routes/gradeRoutes.js';
 import statsRoutes from './routes/statsRoutes.js';
+import userRoutes from './routes/userRoutes.js';
 
 dotenv.config();
 
@@ -37,6 +38,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/students', studentRoutes);
 app.use('/api/grades', gradeRoutes);
 app.use('/api/stats', statsRoutes);
+app.use('/api/users', userRoutes);
 
 // Health check (Render dùng để kiểm tra service đang chạy)
 app.get('/health', (req, res) => {
