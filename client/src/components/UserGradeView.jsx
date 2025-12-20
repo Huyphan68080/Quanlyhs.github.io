@@ -17,6 +17,18 @@ export default function UserGradeView({ onLogout }) {
     const token = getAccessToken();
     if (token) {
       setIsReady(true);
+      
+      // Check if there's pre-selected student data from StudentsList
+      const preSelected = localStorage.getItem('selectedStudentData');
+      if (preSelected) {
+        try {
+          const data = JSON.parse(preSelected);
+          setStudentCodeInput(data.maSv); // Auto-fill with maSv
+          localStorage.removeItem('selectedStudentData'); // Clear after use
+        } catch (err) {
+          console.error('Error parsing pre-selected student:', err);
+        }
+      }
     } else {
       setError('Vui lòng đăng nhập lại');
     }
